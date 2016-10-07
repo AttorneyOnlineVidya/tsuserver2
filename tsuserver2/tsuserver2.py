@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # tsuserver2, an Attorney Online 2 server
 #
 # Copyright (C) 2016 tsukasa84 <tsukasadev84@gmail.com>
