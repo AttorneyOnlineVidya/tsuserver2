@@ -44,3 +44,9 @@ class Client:
 
     def close_transport(self):
         self._transport.close()
+
+    def update_area_list(self, areas):
+        out_area_players = []
+        for area in areas:
+            out_area_players.append(len(area.clients))
+        self.send_command('TA', *out_area_players)

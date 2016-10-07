@@ -27,7 +27,7 @@ from tsuserver2.config import songlist
 
 class TsuServer2:
     def __init__(self):
-        self.client_manager = ClientManager()
+        self.client_manager = ClientManager(self)
         self.area_manager = AreaManager()
         self.cmd_handler = CommandHandler(self)
         self.songlist = songlist.CFG_SONGLIST

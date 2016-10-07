@@ -20,15 +20,16 @@ from tsuserver2.client import Client
 
 
 class ClientManager:
-    def __init__(self):
+    def __init__(self, server):
         self.clients = set()
+        self._server = server
 
     def new_client(self, transport):
         cl = Client(transport)
         self.clients.add(cl)
         return cl
 
-    def disconnect_client(self, client, msg):
+    def disconnect_client(self, client, msg=''):
         logging.log_debug(msg, client)
         client.close_transport()
         try:
@@ -36,3 +37,5 @@ class ClientManager:
             client.area.remove_client(client)
         except ValueError:
             return
+        for client in self.clients:
+            client.update_area_list(self._server.area_manager.areas)

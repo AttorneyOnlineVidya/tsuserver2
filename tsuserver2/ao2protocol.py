@@ -34,6 +34,7 @@ class AO2Protocol(asyncio.Protocol):
         logging.log_debug('New connection.', self._client)
 
         self._client.send_command('HI', config.CFG_SOFTWARE, config.CFG_VERSION)
+        self.net_send_all_ta()
 
     def connection_lost(self, exc):
         if exc is None:
@@ -91,6 +92,13 @@ class AO2Protocol(asyncio.Protocol):
                 flag += 2
             out_flags.append(flag)
         self._client.send_command('TC', *out_flags)
+
+    def net_send_all_ta(self):
+        """
+        Sends every client updated area player count information.
+        """
+        for client in self._server.client_manager.clients:
+            client.update_area_list(self._server.area_manager.areas)
 
     def net_cmd_hi(self, args):
         """
@@ -201,6 +209,7 @@ class AO2Protocol(asyncio.Protocol):
         if len(args) != 0:
             raise Exception('FC should not have any arguments.')
         self._client.charid = -1
+        self.net_send_tc()
         self.net_send_done()
 
     def net_cmd_aa(self, args):
@@ -239,11 +248,7 @@ class AO2Protocol(asyncio.Protocol):
         # confirm area switch
         self._client.send_command('OA', idx, 0)
         # update everyone's area player counts
-        out_area_players = []
-        for area in self._server.area_manager.areas:
-            out_area_players.append(len(area.clients))
-        for client in self._server.client_manager.clients:
-            client.send_command('TA', *out_area_players)
+        self.net_send_all_ta()
 
     def net_cmd_mc(self, args):
         pass
